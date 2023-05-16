@@ -10,15 +10,6 @@ class Producto {
         this.code = code
         this.stock = stock
     }
-    actualizar( p){
-        this.id = p.id
-        this.title = p.title 
-        this.description = p.description
-        this.price = p.price
-        this.thumbnail = p.thumbnail
-        this.code = p.code
-        this.stock = p.stock
-    }
 }
 
 class ProductManager{
