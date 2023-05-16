@@ -35,8 +35,15 @@ class ProductManager{
     }
 
     getProductByID(id){
-        let devolver = undefined
-        this.productos.forEach(producto => {if(producto.id === id)devolver=producto})
+        // Nota al corrector: recibo el comentario sobre esta inicialización trivial (si no hago nada, es undefinded)
+        // Pero me parece más claro dejar explícito que es undefined, ya que pocas líneas después pregunto por ese estado... 
+        // Creo que aporta a la claridad del código
+        
+        let devolver = undefined    
+        this.productos.forEach(producto => {
+            if(producto.id === id)
+                devolver=producto
+        })
 
         if (devolver === undefined){
             console.log("Not found.")
@@ -48,7 +55,6 @@ class ProductManager{
     
 
     deleteProductByID(id){
-                //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
         if (!this.productos.some((producto) => producto.id == id )) {
             console.log ("No se encuentra el ID a eliminar: " + id +  ". Saliendo sin hacer nada.")
             return false
