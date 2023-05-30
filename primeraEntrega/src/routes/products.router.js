@@ -51,5 +51,13 @@ router.put("/:pid", (req, res) => {
         res.status(404).send(" Error al actualizar el producto: ID inexistente.")
 })
 
+router.delete("/:pid", (req, res) => {
+    console.log("Esto es un delete del pid " + req.params.pid)
+ 
+    if (pm.deleteProductByID(req.params.pid))
+        res.status(201).send(" Producto eliminado correctamente")
+    else
+        res.status(404).send(" Error al eliminar el producto: ID inexistente.")
+})
 
 export default router;

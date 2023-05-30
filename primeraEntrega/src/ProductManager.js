@@ -36,22 +36,26 @@ class ProductManager{
     }
     
     deleteProductByID(id){
+        this.productos = this.getProducts()
+
         if (!this.productos.some((producto) => producto.id == id )) {
             return false
         }
-
+        console.log("Antes de eliminar ", this.productos)
         let arrayTemporal = []
     
         this.productos.forEach(producto => {
-            if(producto.id !== id)
+            if(Number(producto.id) !== Number(id))
                 arrayTemporal.push(producto)
         })
 
         // no sé si el scope me permite asignarlo directamente, así que le hago un nuevo push sobre un array vacío
         this.productos = []
         arrayTemporal.forEach(producto => {
+            console.log("Agregando " , producto)
           this.productos.push(producto)
         })
+        console.log("Después de eliminar ", this.productos)
 
         this.saveProducts()
         return true
