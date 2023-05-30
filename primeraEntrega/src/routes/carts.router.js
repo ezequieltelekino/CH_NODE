@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import{CartManager} from '../CartManager.js';
-import {Product} from '../Product.js';
-
 
 const router = Router();
 let cm = new CartManager("carritos.json")
@@ -29,7 +27,7 @@ router.post("/:cid/product/:pid", (req,res) => {
         quantity = 1   // cantidad por defecto, si no mandan nada
     let resultado = cm.addProductToCart(pid, cid,quantity)
     if (resultado)
-        res.status(201).send("Agregando " + quantity + " del producto " + pid + " carrito " + carrito )
+        res.status(201).send("Agregando " + quantity + " del producto " + pid + " carrito " + cid )
     else
         res.status(404).send("Carrito no encontrado")
     return

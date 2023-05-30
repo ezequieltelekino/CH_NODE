@@ -6,7 +6,6 @@ const router = Router();
 const pm = new ProductManager("products.json");
  
 router.get("/", (req,res) => {
-    console.log("get de todos los productos: ", pm.getProducts())
     res.send(pm.getProducts())
 }) 
 
@@ -34,7 +33,6 @@ router.post("/", (req, res) => {
 
 
 router.put("/:pid", (req, res) => {
-    console.log("Esto es un put del pid " + req.params.pid, req.body)
     let nuevoObjeto = {}
     for(var key in req.body) {
         if(req.body.hasOwnProperty(key)){
@@ -44,7 +42,6 @@ router.put("/:pid", (req, res) => {
         }
       }
 
-    console.log ("Vamos a actualizar estos campos ", nuevoObjeto)    
     if (pm.updateProduct(req.params.pid, nuevoObjeto))
         res.status(201).send(" Producto actualizado correctamente")
     else
@@ -52,7 +49,6 @@ router.put("/:pid", (req, res) => {
 })
 
 router.delete("/:pid", (req, res) => {
-    console.log("Esto es un delete del pid " + req.params.pid)
  
     if (pm.deleteProductByID(req.params.pid))
         res.status(201).send(" Producto eliminado correctamente")

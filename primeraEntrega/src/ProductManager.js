@@ -15,7 +15,9 @@ class ProductManager{
             this.productos = JSON.parse(fs.readFileSync(this.path))
         }
         catch{
-            console.log ("El archivo " + this.path + " no existe.")
+           // console.log ("El archivo " + this.path + " no existe.")
+            this.productos = []
+            this.saveProducts()
         }
         return this.productos
     }
@@ -41,7 +43,6 @@ class ProductManager{
         if (!this.productos.some((producto) => producto.id == id )) {
             return false
         }
-        console.log("Antes de eliminar ", this.productos)
         let arrayTemporal = []
     
         this.productos.forEach(producto => {
@@ -52,44 +53,34 @@ class ProductManager{
         // no sé si el scope me permite asignarlo directamente, así que le hago un nuevo push sobre un array vacío
         this.productos = []
         arrayTemporal.forEach(producto => {
-            console.log("Agregando " , producto)
           this.productos.push(producto)
         })
-        console.log("Después de eliminar ", this.productos)
 
         this.saveProducts()
         return true
     }
     
     updateProduct(id , p){
-        console.log("Actualizando " , id, p)
         this.products = this.getProducts()
 
         this.productos.forEach((x) => {
             if ( Number(id) === Number(x.id)){
-                console.log("Antes de actualizar: ", x)
                 for(var key in p) {
                     x[key] = p[key]
                 }
-                console.log("Después de actualizar: ", x)
                 this.saveProducts()
 
                 return true
             }
         })
-        console.log("No se encuentra el id " + id + " en " , this.productos)
         return false
 }
     
     addProduct(p){
-        console.log("Intentando agregar (addproduct)" ,p)
         this.productos = this.getProducts()
-        console.log("Recibiendo lista de artículos" , this.productos)
 
         //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
         if (this.productos.some((producto) => producto.code == p.code )) {
-            console.log("Ya existía!", p.code)
-
             return false
         }
 
@@ -100,7 +91,7 @@ class ProductManager{
         p.id = idDelNuevoProducto
         this.productos.push(p)
         this.saveProducts()
-        console.log("Se agrega con el ID ", p.id)
+    //    console.log("Se agrega con el ID ", p.id)
 
         return true
     }
