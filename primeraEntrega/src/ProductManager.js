@@ -58,32 +58,23 @@ class ProductManager{
     }
     
     updateProduct(id , p){
-        // Me parece más prolijo (y sencillo!) recibir el objeto completo que el ID y el campo a actualizar, así que lo hago de ese modo.
-        let codigoExistente = false
-        let actualizado = false
-        this.productos.forEach(producto => {
-            if(producto.id === id){
-                // En caso de que el ID exista, debería actualizar el producto siempre y cuando el code no exista en otro artículo
-                this.productos.forEach(x => {
-                    if(x.id !== id){
-                        if(x.code === p.code)
-                            codigoExistente = true
-                    }
-                })
-            
-                if (!codigoExistente){  // si el id existía, pero el código no... puedo actualizar!
-                    producto.title = p.title 
-                    producto.description = p.description
-                    producto.price = p.price
-                    producto.thumbnail = p.thumbnail
-                    producto.code = p.code
-                    producto.stock = p.stock
-                    actualizado = true
-                 }
-                }  
+        console.log("Actualizando " , id, p)
+        this.products = this.getProducts()
+
+        this.productos.forEach((x) => {
+            if ( Number(id) === Number(x.id)){
+                console.log("Antes de actualizar: ", x)
+                for(var key in p) {
+                    x[key] = p[key]
+                }
+                console.log("Después de actualizar: ", x)
+                this.saveProducts()
+
+                return true
+            }
         })
-        this.saveProducts()
-        return actualizado
+        console.log("No se encuentra el id " + id + " en " , this.productos)
+        return false
 }
     
     addProduct(p){
