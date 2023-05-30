@@ -11,13 +11,29 @@ router.get("/", (req,res) => {
 }) 
 
 router.get("/:cid", (req,res) => {
-    let id = req.params.cid
-    let devolver = cm.getCartByID(id)
+    let cid = req.params.cid
+    let devolver = cm.getCartByID(cid)
     if (!devolver){
         res.status(404).send("Carrito no encontrado")
         return
     }
     res.send(devolver)
+}) 
+
+
+router.post("/:cid/product/:pid", (req,res) => {
+    let cid = req.params.cid
+    let pid = req.params.pid
+    let quantity = req.body.quantity
+    if (!quantity)
+        quantity = 1   // cantidad por defecto, si no mandan nada
+    let resultado = cm.addProductToCart(pid, cid,quantity)
+    if (resultado)
+        res.status(201).send("Agregando " + quantity + " del producto " + pid + " carrito " + carrito )
+    else
+        res.status(404).send("Carrito no encontrado")
+    return
+
 }) 
 
 router.post("/", (req, res) => {
