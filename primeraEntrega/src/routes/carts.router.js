@@ -1,15 +1,23 @@
 import { Router } from 'express';
+import{CartManager} from '../CartManager.js';
+import {Product} from '../Product.js';
+
 
 const router = Router();
-const carts = []
+let carritos = new CartManager("carritos.json")
 
 router.get("/", (req,res) => {
-    res.send({users})
+    res.send(carritos.getCarts())
 }) 
 
+
 router.post("/", (req, res) => {
-    const user = req.body;
-    users.push(user);
-    res.send({status: "success"})
+    carritos.carts = carritos.getCarts()
+    let carrito = carritos.addCart()
+    if (carrito)
+        res.status(201).send(" Carrito agregado correctamente")
+    else
+        res.status(404).send(" Error al agregar carrito: No se me ocurre cuál pueda llegar a ser el error.")
 })
+
 export default router;
