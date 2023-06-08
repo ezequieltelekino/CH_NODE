@@ -5,7 +5,6 @@ import viewsRouter from "./routes/views.router.js"
 import __dirname from "./utils.js"
 import handlebars from "express-handlebars"
 import { Server } from "socket.io"
-import { ProductManager } from "./ProductManager.js";
 
 const app = express();
 const httpServer = app.listen(8080, () => console.log("Escuchando en 8080")); 
@@ -22,7 +21,6 @@ app.use(express.urlencoded({extended:true}));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter)
-const pm = new ProductManager("products.json");
 
 socketsServer.on("connection", (socket) => {
    
@@ -30,8 +28,8 @@ socketsServer.on("connection", (socket) => {
     socket.emit("evento_para_socket_individual", `Usuario: ${socket.id}, de damos la bienvenida.`);  
 
     socket.on("actualizar_lista", (data) => {
-        let listaDeProductos = pm.getProducts()
-        socket.emit("evento_para_todos", {listaDeProductos})
+        console.log("Soy el backend, y recibí una petición para actualizar la lista.")
+
     });
     
 });

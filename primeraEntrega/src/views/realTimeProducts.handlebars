@@ -1,8 +1,9 @@
 <div>
-   <p> Ésta es lista de productos</p>
-            {{listaDeProductos}}
+   <h1> Ésta es lista de productos</h1>
+            {{#each listaDeProductos}}
+               <p> {{this.id}} | {{this.title}} | {{this.price}}</p>
+            {{/each}}
 </div>
-
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
