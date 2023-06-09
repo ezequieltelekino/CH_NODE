@@ -5,7 +5,7 @@ const viewsRouter = express.Router();
 const pm = new ProductManager("products.json");
 
 
-viewsRouter.get("/realTimeProducts", (req, res) => {
+viewsRouter.get("/realtimeproducts", (req, res) => {
     let listaDeProductos = pm.getProducts()
     res.render("realTimeProducts", {listaDeProductos: listaDeProductos});
 });
