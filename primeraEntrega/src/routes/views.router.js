@@ -10,7 +10,12 @@ viewsRouter.get("/realTimeProducts", (req, res) => {
     res.render("realTimeProducts", {listaDeProductos: listaDeProductos});
 });
 
-viewsRouter.get("/home", (req, res) => {
+viewsRouter.get("/", (req, res) => {
+    let listaDeProductos = pm.getProducts()
+    res.render("home", {listaDeProductos: listaDeProductos});
+});
+
+viewsRouter.get("/home", (req, res) => {  // no entendí si tenía que ser en la raíz, o en /home, pero lo duplico... por las dudas
     let listaDeProductos = pm.getProducts()
     res.render("home", {listaDeProductos: listaDeProductos});
 });
