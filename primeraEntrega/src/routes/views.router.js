@@ -7,14 +7,12 @@ const pm = new ProductManager("products.json");
 
 viewsRouter.get("/realTimeProducts", (req, res) => {
     let listaDeProductos = pm.getProducts()
-
-
-  //  socket.emit("evento_para_todos", {listaDeProductos: "listaDeProductos"})
     res.render("realTimeProducts", {listaDeProductos: listaDeProductos});
-    
- //   res.send(`<p>Phonebook has info for ${persons.length} people.</p><p>${new Date()}</p>`);
-
 });
 
+viewsRouter.get("/home", (req, res) => {
+    let listaDeProductos = pm.getProducts()
+    res.render("home", {listaDeProductos: listaDeProductos});
+});
 
 export default viewsRouter;
