@@ -1,4 +1,6 @@
 import fs from "fs"
+import { sm } from "./app.js"
+
 
 class ProductManager{
 
@@ -7,15 +9,11 @@ class ProductManager{
         this.path = path
     }
 
-
-
     getProducts(){
-        //console.log("Generando un nuevo array desde " + this.path)
         try{
             this.productos = JSON.parse(fs.readFileSync(this.path))
         }
         catch{
-           // console.log ("El archivo " + this.path + " no existe.")
             this.productos = []
             this.saveProducts()
         }
@@ -78,11 +76,15 @@ class ProductManager{
     
     addProduct(p){
         this.productos = this.getProducts()
+   //     console.log("Agregando producto en PM",p)
 
         //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
         if (this.productos.some((producto) => producto.code == p.code )) {
             return false
         }
+
+        if (p.title == "")
+            return false
 
         // genero un id = 0, me quedo con el máximo del array existente, y le sumo uno (manera rústica,lo sé)
         let idDelNuevoProducto = 0
@@ -91,8 +93,7 @@ class ProductManager{
         p.id = idDelNuevoProducto
         this.productos.push(p)
         this.saveProducts()
-    //    console.log("Se agrega con el ID ", p.id)
-
+        sm.avisarQueActualizaronProductos()
         return true
     }
 }

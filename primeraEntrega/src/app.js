@@ -4,12 +4,11 @@ import cartsRouter from "./routes/carts.router.js"
 import viewsRouter from "./routes/views.router.js"
 import __dirname from "./utils.js"
 import handlebars from "express-handlebars"
-import { Server } from "socket.io"
+import SocketManager from "./SocketManager.js"
 
 const app = express();
 const httpServer = app.listen(8080, () => console.log("Escuchando en 8080")); 
-const socketsServer = new Server(httpServer)
-
+const sm = new SocketManager(httpServer) 
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set ("view engine", "handlebars");
@@ -22,14 +21,4 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter)
 
-socketsServer.on("connection", (socket) => {
-   
-    socket.broadcast.emit ("user_connected", `Usuario: ${socket.id} conectado, saluden!`);   // les llega a todos, menos al que llegó
-    socket.emit("evento_para_socket_individual", `Usuario: ${socket.id}, de damos la bienvenida.`);  
-
-    socket.on("actualizar_lista", (data) => {
-        console.log("Soy el backend, y recibí una petición para actualizar la lista.")
-
-    });
-    
-});
+export {sm}
