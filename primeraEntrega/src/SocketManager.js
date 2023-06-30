@@ -49,9 +49,9 @@ class SocketManager{
         });
     }
 
-    avisarQueActualizaronProductos() {
+    async avisarQueActualizaronProductos() {
         const pm = new ProductManager("products.json")
-        let productos = pm.getProducts()
+        let productos = await pm.getProducts()
         console.log("aviso que actualizaron productos: " + productos.length);
         this.io.emit("actualizar_productos",productos);
     }

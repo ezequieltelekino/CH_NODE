@@ -5,8 +5,12 @@ import {Product} from '../Product.js';
 const router = Router();
 const pm = new ProductManager("products.json");
  
-router.get("/", (req,res) => {
-    res.send(pm.getProducts())
+router.get("/", async (req,res) => {
+    console.log("En el router tengo ", productos.length)
+    const productos = await pm.getProducts()
+    console.log("En el router tengo ", productos.length)
+    res.send(productos)
+    console.log("En el router tengo ", productos.length)
 }) 
 
 router.get("/:pid", (req,res) => {
@@ -19,13 +23,14 @@ router.get("/:pid", (req,res) => {
         res.send(devolver)
     }) 
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     let x = req.body
     let imagenes = []  // thumbnails es optativo, le dejo esto hardcodeado
     imagenes.push("primerPath")
     imagenes.push("segundoPath")
     let p = new Product(x.title, x.description, x.price, imagenes, x.code, x.stock )
-    if (pm.addProduct(p))
+    let result = await pm.addProduct(p) 
+    if (result)
         res.status(201).send(" Producto agregado correctamente")
     else
         res.status(404).send(" Error al agregar producto: El código ya existía.")

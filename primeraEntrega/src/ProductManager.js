@@ -1,27 +1,52 @@
 import fs from "fs"
 import { sm } from "./app.js"
+import { productModel } from './models/products.model.js';
 
 
 class ProductManager{
 
+    productModel
+
     constructor(path){
         this.productos= [],
         this.path = path
+        this.productModel = productModel
     }
 
-    getProducts(){
+    async getProducts(){
         try{
-            this.productos = JSON.parse(fs.readFileSync(this.path))
+           // this.productos = JSON.parse(fs.readFileSync(this.path))
+           let res = await this.productModel.find()
+           let products = []
+           res.forEach((p) => {
+            products.push({
+                id: p._id, 
+                title: p.title,
+                code: p.code,
+                descrition: p.description,
+                price: p.price 
+                //suficiente 
+            })
+
+           }
+         
+           )
+           console.log("Recibiendo ", products.length)
+           return products
+
         }
-        catch{
+        catch(err){
+            console.log("Error leyendo mongocosas... devolviendo productos en blanco.", err)
             this.productos = []
-            this.saveProducts()
+         //   this.saveProducts()
         }
-        return this.productos
+        console.log("Cantidad de productos:", this.productos.length)
+
     }
 
     saveProducts(){
-        fs.writeFileSync(this.path, JSON.stringify(this.productos))
+        //fs.writeFileSync(this.path, JSON.stringify(this.productos))
+        
     }
 
     getProductByID(id){
@@ -74,27 +99,38 @@ class ProductManager{
         return false
 }
     
-    addProduct(p){
-        this.productos = this.getProducts()
-   //     console.log("Agregando producto en PM",p)
+    async addProduct(p){
+        try{
+            this.products = await this.getProducts()
+            
+            //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
+            console.log("Leyendo productos en add: " , this.products.length)
+            if (this.products.some((producto) => producto.code == p.code )) {
+                console.log("código dupluicado:",p)
+                return false
+            }
 
-        //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
-        if (this.productos.some((producto) => producto.code == p.code )) {
-            return false
+            if (p.title == "")
+                return false
+
+            /* let idDelNuevoProducto = 0
+                // genero un id = 0, me quedo con el máximo del array existente, y le sumo uno (manera rústica,lo sé)
+                this.productos.forEach(producto => {if(producto.id > idDelNuevoProducto)idDelNuevoProducto=producto.id})
+                idDelNuevoProducto++
+                p.id = idDelNuevoProducto
+                this.productos.push(p)
+                this.saveProducts()
+            */
+        
+            console.log("Por agregar:",p)
+            let result = await this.productModel.create(p)
+            console.log("Result: ", result)
+            await sm.avisarQueActualizaronProductos(result._id)
+            return true    
         }
-
-        if (p.title == "")
-            return false
-
-        // genero un id = 0, me quedo con el máximo del array existente, y le sumo uno (manera rústica,lo sé)
-        let idDelNuevoProducto = 0
-        this.productos.forEach(producto => {if(producto.id > idDelNuevoProducto)idDelNuevoProducto=producto.id})
-        idDelNuevoProducto++
-        p.id = idDelNuevoProducto
-        this.productos.push(p)
-        this.saveProducts()
-        sm.avisarQueActualizaronProductos()
-        return true
-    }
+        catch(error){
+            console.log("Error en add product:", error)
+        }
+}
 }
 export {ProductManager};
