@@ -4,7 +4,8 @@
     "express-handlebars": "^7.0.7",
     "mongoose": "^7.3.1",
     "nodemon": "^2.0.22",
-    "socket.io": "^4.6.2"
+    "socket.io": "^4.6.2",
+    "sweetalert2": "^11.7.12"
   },
   "name": "primeraentrega",
   "version": "1.0.0",

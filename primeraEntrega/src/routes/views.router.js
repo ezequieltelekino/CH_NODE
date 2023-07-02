@@ -1,5 +1,6 @@
 import express from "express";
 import { ProductManager } from "../ProductManager.js";
+import { messageModel } from "../dao/models/messages.model.js";
 
 const viewsRouter = express.Router();
 const pm = new ProductManager("products.json");
@@ -22,5 +23,7 @@ viewsRouter.get("/home", (req, res) => {  // no entendí si tenía que ser en la
     let listaDeProductos = pm.getProducts()
     res.render("home", {listaDeProductos: listaDeProductos});
 });
+
+
 
 export default viewsRouter;

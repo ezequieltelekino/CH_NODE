@@ -1,0 +1,23 @@
+<div>
+   <p>Enviar mensaje</p>
+   <div>
+      <input id="chatBox">
+   </div>
+
+   <h1> Ésta es lista de mensajes</h1>
+   <div id="divChat">
+      {{#each listaDeMensajes}}
+         <p>  {{this.user}} dijo: {{this.message}} </p>
+      {{/each}}
+   </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+
+
+
+
+
+

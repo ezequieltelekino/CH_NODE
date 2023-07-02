@@ -1,9 +1,7 @@
 <div>
-
-   
    <h1> Ésta es lista de productos</h1>
-            {{#each listaDeProductos}}
-               <p>  {{this.title}} | {{this.code}} |  {{this.description}} | {{this.price}}</p>
-            {{/each}}
+   {{#each listaDeProductos}}
+      <p>  {{this.title}} | {{this.code}} |  {{this.description}} | {{this.price}}</p>
+   {{/each}}
 </div>
 

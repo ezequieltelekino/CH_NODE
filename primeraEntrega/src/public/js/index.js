@@ -1,3 +1,5 @@
+//import { removeAllListeners } from "nodemon";
+
 const socket = io();
 
 // Mensaje hacia el servidor (emit pelado)
@@ -42,15 +44,61 @@ socket.on ("actualizar_productos",  (data) => {
 }) ;
 
 const form = document.getElementById('formularioAgregarProducto')
-form.addEventListener('submit', e => {
-    e.preventDefault()
-    const product = {
-        title: form.elements.title.value,
-        description: form.elements.description.value,
-        code: form.elements.code.value,
-        price: form.elements.price.value,
+if (form)
+    form.addEventListener('submit', e => {
+        e.preventDefault()
+        const product = {
+            title: form.elements.title.value,
+            description: form.elements.description.value,
+            code: form.elements.code.value,
+            price: form.elements.price.value,
+        }
+        console.log("Evento formulario", product)
+        socket.emit('solicito_agregar_producto', product)
+        form.reset()
+    })
+
+let chatBox = document.getElementById("chatBox")
+let user;
+Swal.fire({
+    title:"user",
+    input: "text" ,
+    text: "ingresá tu nombre",
+    inputValidator: (value) =>{
+        return !value && "El usuario no puede estar en blanco"
+     }
     }
-    console.log("Evento formulario", product)
-    socket.emit('solicito_agregar_producto', product)
-    form.reset()
+ ).then( result => {
+    user=result.value;
+    console.log("El usuario es: " + user )
+
 })
+
+
+chatBox.addEventListener("keyup", evt => {
+    if (evt.key == "Enter"){
+        if (chatBox.value.trim().length>0){
+            socket.emit('enviar_mensaje', user, chatBox.value)    
+        }
+    }
+})
+
+socket.on ("actualizar_chat",  (data) => {
+
+    if (data.length === undefined)
+        return
+     console.log("Recibimos todos: ", data, "Largo: ", data.length)
+    let divChat = document.getElementById("divChat")
+    if (divChat)
+    divChat.remove()
+    divChat = document.createElement("div")
+    divChat.id="divChat"
+    data.forEach( (msg) => {
+        let contenido = msg.user + " dice:  " + msg.message    
+        let linea = document.createElement("p")
+        linea.innerHTML = contenido
+        divChat.append(linea)
+    }) 
+    document.body.append(divChat)
+    console.log(divChat)
+}) ;

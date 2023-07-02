@@ -1,6 +1,5 @@
 <div>
    <p>Agregar nuevo producto</p>
-   <!-- action="http://localhost:8080/api/products/"  -->
    <form method="post" id="formularioAgregarProducto">
       <label>Title</label>
       <input name="title"></input> <br>
@@ -16,6 +15,7 @@
 
       <input type="submit" value="Send"></input>
    </form>
+   
    <h1> Ésta es lista de productos en tiempo real</h1>
    <div id="divQueContieneProductos">
    {{#each listaDeProductos}}

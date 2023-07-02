@@ -1,6 +1,6 @@
 import { ProductManager } from "./ProductManager.js";
 import { Server } from "socket.io"
-
+import { messageModel } from "./dao/models/messages.model.js";
 
 class SocketManager{
     constructor(httpServer){
@@ -26,6 +26,13 @@ class SocketManager{
                 pm.addProduct(product)
                 socket.emit("evento_para_socket_individual", `Usuario: ${socket.id}, actualizaste productos.`);  
                 this.io.emit("actualizar_productos", pm.getProducts())
+            });
+
+            socket.on("enviar_mensaje", async (user, msg) => {
+                console.log("El cliente ", user , " dijo: ",  msg)
+                const mensaje = await messageModel.create({user: user, message: msg})
+                const mensajes = await messageModel.find()
+                this.io.emit("actualizar_chat", mensajes)
             });
         });
 
