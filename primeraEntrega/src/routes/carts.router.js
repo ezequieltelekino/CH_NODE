@@ -5,28 +5,30 @@ import { cartModel } from '../dao/models/carts.model.js';
 const router = Router();
 let cm = new CartManager("carritos.json")
 
-router.get("/", (req,res) => {
-    res.send(cm.getCarts())
+router.get("/", async (req,res) => {
+     res.send(await cm.getCarts())
 }) 
 
-router.get("/:cid", (req,res) => {
+router.get("/:cid", async (req,res) => {
     let cid = req.params.cid
-    let devolver = cm.getCartByID(cid)
-    if (!devolver){
+    let devolver
+    try{
+        devolver =  await cartModel.find({_id: cid})
+        res.send(devolver)
+    } 
+    catch{
         res.status(404).send("Carrito no encontrado")
-        return
-    }
-    res.send(devolver)
+    }    
 }) 
 
 
-router.post("/:cid/product/:pid", (req,res) => {
+router.post("/:cid/product/:pid", async (req,res) => {
     let cid = req.params.cid
     let pid = req.params.pid
     let quantity = req.body.quantity
     if (!quantity)
         quantity = 1   // cantidad por defecto, si no mandan nada
-    let resultado = cm.addProductToCart(pid, cid,quantity)
+    let resultado = await cm.addProductToCart(pid, cid,quantity)
     if (resultado)
         res.status(201).send("Agregando " + quantity + " del producto " + pid + " carrito " + cid )
     else

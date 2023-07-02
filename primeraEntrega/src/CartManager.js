@@ -26,7 +26,7 @@ class CartManager{
                  products: p.products,
              })
             });
-          
+            this.carts = carts
             return carts
             //this.carts = JSON.parse(fs.readFileSync(this.path))
         }
@@ -40,15 +40,18 @@ class CartManager{
         return this.carts
     }
 
-    getCartByID(id){
-        this.carts = this.getCarts()
-        let devolver = undefined
-        this.carts.forEach((x) => {
-            if ( Number(id) === Number(x.id)){
-                devolver = x
-            }
-        })
-        return devolver
+    async getCartByID(cid){
+
+        let carrito 
+       // console.log(carrito)
+      //  this.carts = this.getCarts()
+      //  let devolver = undefined
+        // this.carts.forEach((x) => {
+        //     if ( Number(id) === Number(x.id)){
+        //         devolver = x
+        //     }
+        // })
+        return carrito
     }
     
     async addCart(){
@@ -63,39 +66,41 @@ class CartManager{
         return id
     }
 
-    addProductToCart(pid, cid, quantity){
-        this.carts = this.getCarts()
-        let carritoEncontrado = false
-        this.carts.forEach((c) => {
-            if ( Number(cid) === Number(c.id)){   // en el carrito correspondiente
+    async addProductToCart(pid, cid, quantity){
+        console.log("Agregando al carrito " , cid, pid, quantity)
+        //this.carts = await this.getCarts()
+        //console.log("El contenido del carrito antes de agregar es:" ,this.carts)
+        let carrito = await this.cartModel.findOne({_id: cid})
+       // console.log("El carrito encontrado es: ", carrito)
+        let productoEncontrado = false
+        let productos = []
+        let productoNuevo = {id: pid, quantity: quantity }
 
-                let productoEncontrado = false
-                carritoEncontrado = true
-                
-                c.products.forEach((p) => {     // reviso todos sus artículos
-                    if ( Number(pid) == Number(p.id)){  // si existe el que voy a agregar, lo sumo
-                        productoEncontrado = true
-                        p.quantity += quantity
-            //            console.log ("sumando",cid, pid,  quantity, p.quantity)
-                    }
-                })
-                if (!productoEncontrado){
-                    let nuevoProducto = {id:pid, quantity:quantity}
-              //      console.log("Agregando ", cid, nuevoProducto)
-                    c.products.push(nuevoProducto)
-                }
-               // console.log("Guardando carrito")
-                this.saveCarts()
-                return true
-            }
-        })
-        if (!carritoEncontrado){
-           // console.log("No encontré el carrito, posta!")
+        if (!carrito || carrito.length === 0){
+            console.log ("Carrito no encontrado")
             return false
-        }else{
-            return true
         }
-    }
+        carrito.products.forEach((p) => {     // reviso todos sus artículos
+          //  console.log("Viendo el producto ", p , " en ", carrito)
+            if ( Number(pid) == Number(p.id)){  // si existe el que voy a agregar, lo sumo
+                console.log("el producto es: " , p.id)
+                console.log("y tiene: " , p.quantity)
+                productoEncontrado = true
+                console.log ("sumando",productoNuevo.quantity, " a las " , p.quantity , " anteriores")
+                productoNuevo.quantity += p.quantity
+            }
+            else{    
+                let tmp = {id: p.id, quantity: p.quantity}
+                productos.push(tmp)
+            }
+        
+        })
+        productos.push(productoNuevo)
+        console.log("La lista de productos es: ", productos)
+        let res = await this.cartModel.updateOne({_id: cid}, {products: productos})
+        console.log(res)
 
+        return true  
+    }
 }
 export {CartManager};
