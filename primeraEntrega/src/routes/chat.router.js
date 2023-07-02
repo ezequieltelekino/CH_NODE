@@ -15,10 +15,7 @@ router.get("/", async (req,res) => {
         listaDeMensajes.push(mensaje)
 
     })
-
     res.render("chat",{listaDeMensajes: listaDeMensajes})
-
-
 }) 
 
 router.post("/", async (req,res) => {

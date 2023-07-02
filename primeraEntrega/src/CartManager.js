@@ -1,23 +1,40 @@
 import fs from "fs"
+import { cartModel } from "./dao/models/carts.model.js"
 
 class CartManager{
+
+    cartModel
 
     constructor(path){
         this.carts = [],
         this.path = path
+        this.cartModel = cartModel
     }
 
     saveCarts(){
         fs.writeFileSync(this.path, JSON.stringify(this.carts))
     }
 
-    getCarts(){
+    async getCarts(){
         try{
-            this.carts = JSON.parse(fs.readFileSync(this.path))
+            let res = await this.cartModel.find()
+            let carts = []
+
+            res.forEach((p) => {
+             carts.push({
+                 id: p._id, 
+                 products: p.products,
+             })
+            });
+          
+            return carts
+            //this.carts = JSON.parse(fs.readFileSync(this.path))
         }
         catch{
+            console.log("Saliendo por el catch")
             this.carts = []
-            this.saveCarts()
+            return []
+          //  this.saveCarts()
       //      console.log ("El archivo " + this.path + " no existe, creándolo en blanco.")
         }
         return this.carts
@@ -34,13 +51,14 @@ class CartManager{
         return devolver
     }
     
-    addCart(){
+    async addCart(){
         this.carts = this.getCarts()
         let id = 0
-        let products = []
         this.carts.forEach(carrito => {if(carrito.id > id)id=carrito.id})
         id++
         this.carts.push({id, products})
+        this.carts.push(products)
+
         this.saveCarts()
         return id
     }

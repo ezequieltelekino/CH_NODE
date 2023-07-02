@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import{CartManager} from '../CartManager.js';
+import { cartModel } from '../dao/models/carts.model.js';
 
 const router = Router();
 let cm = new CartManager("carritos.json")
@@ -34,9 +35,12 @@ router.post("/:cid/product/:pid", (req,res) => {
 
 }) 
 
-router.post("/", (req, res) => {
-    cm.carts = cm.getCarts()
-    let carrito = cm.addCart()
+router.post("/", async (req, res) => {
+   // cm.carts = cm.getCarts()
+    console.log("Agregando carrito")
+   // let carrito = cm.addCart()
+   let carrito = await cartModel.create([{}])
+
     if (carrito)
         res.status(201).send(" Carrito " + carrito +" agregado correctamente")
     else
