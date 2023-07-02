@@ -18,6 +18,7 @@ class ProductManager{
            // this.productos = JSON.parse(fs.readFileSync(this.path))
            let res = await this.productModel.find()
            let products = []
+
            res.forEach((p) => {
             products.push({
                 id: p._id, 
@@ -33,7 +34,6 @@ class ProductManager{
            )
            console.log("Recibiendo ", products.length)
            return products
-
         }
         catch(err){
             console.log("Error leyendo mongocosas... devolviendo productos en blanco.", err)
@@ -107,11 +107,15 @@ class ProductManager{
             console.log("Leyendo productos en add: " , this.products.length)
             if (this.products.some((producto) => producto.code == p.code )) {
                 console.log("código dupluicado:",p)
+                sm.avisarQueActualizaronProductos(false)
                 return false
             }
 
-            if (p.title == "")
+            if (p.title == ""){
+                sm.avisarQueActualizaronProductos(false)
                 return false
+            }
+
 
             /* let idDelNuevoProducto = 0
                 // genero un id = 0, me quedo con el máximo del array existente, y le sumo uno (manera rústica,lo sé)
@@ -125,7 +129,7 @@ class ProductManager{
             console.log("Por agregar:",p)
             let result = await this.productModel.create(p)
             console.log("Result: ", result)
-            await sm.avisarQueActualizaronProductos(result._id)
+            sm.avisarQueActualizaronProductos(result._id)
             return true    
         }
         catch(error){

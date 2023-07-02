@@ -21,7 +21,7 @@ app.use(express.urlencoded({extended:true}));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
-const MONGO_URL = "mongodb+srv://ezequieltelekino:puqG7MAMwJHA1F9q@cluster0.jwb08ed.mongodb.net/"
+const MONGO_URL = "mongodb+srv://ezequieltelekino:puqG7MAMwJHA1F9q@cluster0.jwb08ed.mongodb.net/ecommerce"
 const connection = mongoose.connect(MONGO_URL).then((conn) => {
     console.log("Conectado correctamente con Atlas");
 }).catch ((err) =>{

@@ -5,12 +5,9 @@ import {Product} from '../Product.js';
 const router = Router();
 const pm = new ProductManager("products.json");
  
-router.get("/", async (req,res) => {
-    console.log("En el router tengo ", productos.length)
-    const productos = await pm.getProducts()
-    console.log("En el router tengo ", productos.length)
+router.get("/",  (req,res) => {
+    const productos =  pm.getProducts()
     res.send(productos)
-    console.log("En el router tengo ", productos.length)
 }) 
 
 router.get("/:pid", (req,res) => {
@@ -23,13 +20,13 @@ router.get("/:pid", (req,res) => {
         res.send(devolver)
     }) 
 
-router.post("/", async (req, res) => {
+router.post("/", (req, res) => {
     let x = req.body
     let imagenes = []  // thumbnails es optativo, le dejo esto hardcodeado
     imagenes.push("primerPath")
     imagenes.push("segundoPath")
     let p = new Product(x.title, x.description, x.price, imagenes, x.code, x.stock )
-    let result = await pm.addProduct(p) 
+    let result =  pm.addProduct(p) 
     if (result)
         res.status(201).send(" Producto agregado correctamente")
     else
