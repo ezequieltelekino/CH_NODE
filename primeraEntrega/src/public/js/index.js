@@ -20,14 +20,17 @@ socket.on ("evento_para_todos_menos_socket_actual", (data) => {
 
 
 
-socket.on ("actualizar_productos", (data) => {
-    console.log("Recibimos todos: ", data)
+socket.on ("actualizar_productos",  (data) => {
+
+    if (data.length === undefined)
+        return
+     console.log("Recibimos todos: ", data, "Largo: ", data.length)
     let divQueContieneProductos = document.getElementById("divQueContieneProductos")
     if (divQueContieneProductos)
          divQueContieneProductos.remove()
     divQueContieneProductos = document.createElement("div")
     divQueContieneProductos.id="divQueContieneProductos"
-  //  console.log("Nuevo array", data)
+   console.log("Nuevo array", data)
     data.forEach( (prod) => {
         let contenido = prod.id + " | " + prod.title + " | " + prod.description  + " | " + prod.code  + " | " + prod.price    
         let linea = document.createElement("p")

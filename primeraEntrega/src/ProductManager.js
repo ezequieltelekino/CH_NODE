@@ -1,6 +1,6 @@
 import fs from "fs"
 import { sm } from "./app.js"
-import { productModel } from './models/products.model.js';
+import { productModel } from './dao/models/products.model.js';
 
 
 class ProductManager{
@@ -24,7 +24,7 @@ class ProductManager{
                 id: p._id, 
                 title: p.title,
                 code: p.code,
-                descrition: p.description,
+                description: p.description,
                 price: p.price 
                 //suficiente 
             })
