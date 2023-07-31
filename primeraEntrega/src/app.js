@@ -26,7 +26,7 @@ app.use("/api/chat", chatRouter);
 app.use("/", viewsRouter);
 app.use("/chat",chatRouter)
 
-const MONGO_URL = "mongodb+srv://ezequieltelekino:puqG7MAMwJHA1F9q@cluster0.jwb08ed.mongodb.net/ecommerce"
+const MONGO_URL = "mongodb+srv://ezequieltelekino:clavesupersecretademongodb@cluster0.jwb08ed.mongodb.net/ecommerce"
 const connection = mongoose.connect(MONGO_URL).then((conn) => {
     console.log("Conectado correctamente con Atlas");
 }).catch ((err) =>{
