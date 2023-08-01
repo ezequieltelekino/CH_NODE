@@ -6,18 +6,21 @@ const router = Router();
 const pm = new ProductManager("products.json");
  
 router.get("/",  (req,res) => {
-    const productos =  pm.getProducts()
+    const limit = req.query.limit
+    console.log("limit es " + limit)
+    const productos =  pm.getProducts(limit)
     res.send(productos)
 }) 
 
-router.get("/:pid", (req,res) => {
-        let id = req.params.pid
-        let devolver = pm.getProductByID(pid)
-        if (!devolver){
+router.get("/:pid", async(req,res) =>  {
+        let pid = req.params.pid
+        try{
+            let devolver =  await pm.getProductByID(pid)
+            res.send(devolver)
+        }   
+        catch{
             res.status(404).send("Producto no encontrado")
-            return
         }
-        res.send(devolver)
     }) 
 
 router.post("/", (req, res) => {
@@ -50,9 +53,9 @@ router.put("/:pid", (req, res) => {
         res.status(404).send(" Error al actualizar el producto: ID inexistente.")
 })
 
-router.delete("/:pid", (req, res) => {
- 
-    if (pm.deleteProductByID(req.params.pid))
+router.delete("/:pid", async (req, res) => {
+    let result = await pm.deleteProductByID(req.params.pid)
+    if (result === true)
         res.status(201).send(" Producto eliminado correctamente")
     else
         res.status(404).send(" Error al eliminar el producto: ID inexistente.")

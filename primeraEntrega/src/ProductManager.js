@@ -2,21 +2,19 @@ import fs from "fs"
 import { sm } from "./app.js"
 import { productModel } from './dao/models/products.model.js';
 
-
 class ProductManager{
-
     productModel
-
     constructor(path){
         this.productos= [],
         this.path = path
         this.productModel = productModel
     }
 
-    async getProducts(){
+    async getProducts(limit){
         try{
-           // this.productos = JSON.parse(fs.readFileSync(this.path))
-           let res = await this.productModel.find()
+            if(typeof(limit) != Number || limit < 1)
+                limit = 10
+           let res = await this.productModel.find().sort({_id:-1}).limit(limit)
            let products = []
 
            res.forEach((p) => {
@@ -26,115 +24,65 @@ class ProductManager{
                 code: p.code,
                 description: p.description,
                 price: p.price 
-                //suficiente 
             })
-
-           }
-         
-           )
-           console.log("Recibiendo ", products.length)
+           }             
+        )
            return products
         }
         catch(err){
-            console.log("Error leyendo mongocosas... devolviendo productos en blanco.", err)
             this.productos = []
-         //   this.saveProducts()
         }
-        console.log("Cantidad de productos:", this.productos.length)
-
     }
 
-    saveProducts(){
-        //fs.writeFileSync(this.path, JSON.stringify(this.productos))
-        
-    }
-
-    getProductByID(id){
-        this.productos = this.getProducts()
-        let devolver = undefined
-        this.productos.forEach((x) => {
-            if ( Number(id) === Number(x.id)){
-                devolver = x
-            }
-        })
-        return devolver
+    async getProductByID(id){
+        let res =  await this.productModel.findOne({_id: id})
+        return res
     }
     
-    deleteProductByID(id){
-        this.productos = this.getProducts()
-
-        if (!this.productos.some((producto) => producto.id == id )) {
+    async deleteProductByID(id){
+        let result
+        try{
+            result = await this.productModel.deleteMany({_id: id})
+            if (result.deletedCount>0)
+                return true
+            
+            return false   
+        }
+        catch(e){
+            console.log("ERROR: " + e)
             return false
         }
-        let arrayTemporal = []
+     }
     
-        this.productos.forEach(producto => {
-            if(Number(producto.id) !== Number(id))
-                arrayTemporal.push(producto)
-        })
-
-        // no sé si el scope me permite asignarlo directamente, así que le hago un nuevo push sobre un array vacío
-        this.productos = []
-        arrayTemporal.forEach(producto => {
-          this.productos.push(producto)
-        })
-
-        this.saveProducts()
-        return true
-    }
-    
-    updateProduct(id , p){
-        this.products = this.getProducts()
-
-        this.productos.forEach((x) => {
-            if ( Number(id) === Number(x.id)){
-                for(var key in p) {
-                    x[key] = p[key]
-                }
-                this.saveProducts()
-
+    async updateProduct(id , p){
+         await this.productModel.updateOne({_id: id}, {
+            title: p.title,
+            description: p.description,
+            price: p.price,
+            thumbnails: p.thumbnails,
+            status: p.status,
+            stock: p.stock
+         },function (err, docs){
+            if (err){
+                console.log ("Error actualizando "+err)
+                return false
+            }else{
                 return true
             }
-        })
-        return false
-}
-    
+         })    
+      }
+
     async addProduct(p){
-        try{
-            this.products = await this.getProducts()
-            
-            //valido que no exista el código (que NO es el id, sino que puede ser cualquier cosa)
-            console.log("Leyendo productos en add: " , this.products.length)
-            if (this.products.some((producto) => producto.code == p.code )) {
-                console.log("código dupluicado:",p)
-                sm.avisarQueActualizaronProductos(false)
-                return false
-            }
-
-            if (p.title == ""){
-                sm.avisarQueActualizaronProductos(false)
-                return false
-            }
-
-
-            /* let idDelNuevoProducto = 0
-                // genero un id = 0, me quedo con el máximo del array existente, y le sumo uno (manera rústica,lo sé)
-                this.productos.forEach(producto => {if(producto.id > idDelNuevoProducto)idDelNuevoProducto=producto.id})
-                idDelNuevoProducto++
-                p.id = idDelNuevoProducto
-                this.productos.push(p)
-                this.saveProducts()
-            */
-        
-            console.log("Por agregar:",p)
+        try{   
             let result = await this.productModel.create(p)
-            console.log("Result: ", result)
             sm.avisarQueActualizaronProductos(result._id)
             return true    
         }
         catch(error){
-            console.log("Error en add product:", error)
+            sm.avisarQueActualizaronProductos(false)
+            return false
         }
+    }
 }
-}
+
 export {ProductManager};
